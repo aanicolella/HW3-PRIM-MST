@@ -71,4 +71,26 @@ def test_mst_student():
     TODO: Write at least one unit test for MST construction.
     
     """
-    pass
+    file_path = './data/small.csv'
+    g = Graph(file_path)
+    g.construct_mst()
+    # Check for proper number of edges
+    expected_nEdge = g.mst.shape[0] - 1
+    edges = 0
+    for i in range(g.mst.shape[0]):
+        for j in range(i+1):
+            if g.mst[i, j] > 0:
+                edges+=1
+    assert expected_nEdge == edges, 'Proposed MST has incorrect number of edges'
+
+def test_mst_connected():
+    """
+    
+    TODO: Write at least one unit test for MST construction.
+    
+    """
+    file_path = './data/small.csv'
+    g = Graph(file_path)
+    g.construct_mst()
+    # Check for at least one edge for each node
+    assert not np.any(np.sum(g.mst, axis=0) == 0), 'Proposed MST has unconnected nodes'
