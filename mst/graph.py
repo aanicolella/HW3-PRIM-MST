@@ -24,6 +24,10 @@ class Graph:
     def _load_adjacency_matrix_from_csv(self, path: str) -> np.ndarray:
         with open(path) as f:
             return np.loadtxt(f, delimiter=',')
+        
+    def _checkNodesConnected(self):
+        if np.any(np.sum(self.adj_mat, axis=0) == 0.0):
+            raise ValueError('Disconnected nodes identified--unable to find MST')
 
     def construct_mst(self):
         """
@@ -41,6 +45,9 @@ class Graph:
         `heapify`, `heappop`, and `heappush` functions.
 
         """
+        # check that all nodes have at least one edge before looking for MST
+        self._checkNodesConnected()
+
         # get num vertices (V)
         V = len(self.adj_mat)
         # for tracking if nodes are in MST--initialize to false for number of nodes in graph

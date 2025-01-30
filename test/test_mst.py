@@ -35,6 +35,18 @@ def check_mst(adj_mat: np.ndarray,
             total += mst[i, j]
     assert approx_equal(total, expected_weight), 'Proposed MST has incorrect expected weight'
 
+    # Check for at least one edge for each node
+    assert not np.any(np.sum(mst, axis=0) == 0.0), 'Proposed MST has unconnected nodes'
+
+    # Check for proper number of edges
+    expected_nEdge = mst.shape[0] - 1
+    edges = 0
+    for i in range(mst.shape[0]):
+        for j in range(i+1):
+            if mst[i, j] > 0:
+                edges+=1
+    assert expected_nEdge == edges, 'Proposed MST has incorrect number of edges'
+
 
 def test_mst_small():
     """
@@ -71,26 +83,8 @@ def test_mst_student():
     TODO: Write at least one unit test for MST construction.
     
     """
-    file_path = './data/small.csv'
+    # Check to see if adj matrix contains disconnected nodes
+    file_path = './data/disconnected.csv'
     g = Graph(file_path)
-    g.construct_mst()
-    # Check for proper number of edges
-    expected_nEdge = g.mst.shape[0] - 1
-    edges = 0
-    for i in range(g.mst.shape[0]):
-        for j in range(i+1):
-            if g.mst[i, j] > 0:
-                edges+=1
-    assert expected_nEdge == edges, 'Proposed MST has incorrect number of edges'
-
-def test_mst_connected():
-    """
-    
-    TODO: Write at least one unit test for MST construction.
-    
-    """
-    file_path = './data/small.csv'
-    g = Graph(file_path)
-    g.construct_mst()
-    # Check for at least one edge for each node
-    assert not np.any(np.sum(g.mst, axis=0) == 0), 'Proposed MST has unconnected nodes'
+    with pytest.raises(ValueError):
+        g.construct_mst()
