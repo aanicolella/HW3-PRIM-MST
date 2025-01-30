@@ -41,4 +41,35 @@ class Graph:
         `heapify`, `heappop`, and `heappush` functions.
 
         """
-        self.mst = None
+        # get num vertices (V)
+        V = len(self.adj_mat)
+        # for tracking if nodes are in MST--initialize to false for number of nodes in graph
+        visited = [False] * V
+        # initialize MST node tracking
+        buildMST = np.zeros(self.adj_mat.shape)
+        # for tracking MST weight
+        MST_weight= 0
+        
+        # set start node, using 0 in this case, but could be adjusted to random node
+        start = 0
+        visited[start] = True
+        # initialize and build pq for start node
+        pq = [(w, start, v) for v, w in enumerate(self.adj_mat[start]) if w > 0]
+        heapq.heapify(pq)
+
+        # now that everything's initialized, prims algorithm for finding MST
+        while pq:
+            # pop values and check if vertex already visited--nodes may have multiple key values in pq, first=lowest, ignore rest
+            w, u, v = heapq.heappop(pq)
+            if visited[v]:
+                continue
+            visited[v] = True
+            # add to MST adj matrix and update MST weight tracking
+            buildMST[v,u], buildMST[u,v] = w, w
+            MST_weight += w
+            # checking for and adding unvisited neighbors to pq
+            for neighbor, w in enumerate(self.adj_mat[v]):
+                if w > 0 and not visited[neighbor]:
+                    heapq.heappush(pq, (w,v,neighbor))
+        # save mst to proper slot in self
+        self.mst = buildMST
